@@ -134,11 +134,11 @@ window.onload = function () {
   const startEverything = () => {
     if (!interactionStarted) {
       if (mainMessage) mainMessage.classList.add("fade-out");
-      if (musica) {
-        musica
-          .play()
-          .catch((error) => console.log("Esperando clic para audio..."));
-      }
+      //if (musica) {
+      musica
+        .play()
+        .catch((error) => console.log("Esperando clic para audio..."));
+      //}
       interactionStarted = true;
       //60 segundos
       setTimeout(showFinalNote, 60000);
