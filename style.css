@@ -1,0 +1,97 @@
+/* 1. Base del cuerpo */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000000;
+  overflow: hidden; /* Evita el scroll infinito por los elementos que suben */
+  font-family: "Montserrat", sans-serif;
+  height: 100vh;
+  width: 100vw;
+  touch-action: none; /* Mejora la respuesta táctil en móviles */
+}
+
+/* 2. El contenedor que movemos con el dedo */
+#floating-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+  will-change: transform;
+}
+
+/* 3. Estilo responsivo para las fotos */
+.floating-img {
+  position: absolute;
+  /* Usamos 'vw' (view width) para que el tamaño dependa del ancho de la pantalla */
+  width: 25vw;
+  max-width: 150px; /* No tan grandes en PC */
+  min-width: 80px; /* No tan pequeñas en móviles */
+  height: auto;
+  object-fit: cover;
+  border: 3px solid white;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* 4. Estilo responsivo para los textos */
+.floating-item {
+  position: absolute;
+  white-space: nowrap;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  /* El tamaño se calcula en el JS, pero aquí aseguramos que no rompa líneas */
+}
+
+/* 5. Mensaje central responsivo */
+.main-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /* Para que el texto no toque los bordes en móvil */
+  text-align: center;
+  color: white;
+  z-index: 10;
+}
+
+.main-content h1 {
+  font-size: 1.5rem; /* Tamaño base para móvil */
+}
+
+/* 6. MEDIA QUERIES (Ajustes para pantallas grandes como PC) */
+@media (min-width: 768px) {
+  .main-content h1 {
+    font-size: 3rem; /* Más grande en computadoras */
+  }
+
+  .floating-img {
+    width: 12vw; /* Fotos más proporcionadas en pantallas anchas */
+  }
+}
+
+/* 7. La animación de subida */
+@keyframes moveUp {
+  0% {
+    transform: translateY(110vh) scale(0.8);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20vh) scale(1);
+    opacity: 0;
+  }
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}

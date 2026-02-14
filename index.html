@@ -1,204 +1,24 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>💜 ¿Serás mi Valentín Saltarin? 💜</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;700&display=swap');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Para Ti</title>
+    <link rel="stylesheet" href="style.css" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="stars"></div>
 
-        body {
-            font-family: 'Quicksand', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #a745ff 0%, #7d1eff 100%);
-            color: white;
-            text-align: center;
-            overflow: hidden; /* Muy importante para que el conejo no genere scroll */
-            position: relative; /* Necesario para posicionar el conejo */
-        }
+    <div id="floating-container"></div>
 
-        .container {
-            background-color: rgba(255, 255, 255, 0.95);
-            border-radius: 35px;
-            padding: 50px 40px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
-            position: relative;
-            z-index: 10; /* Para que la tarjeta esté encima del conejo */
-            max-width: 400px;
-            width: 90%;
-        }
-
-        h1 {
-            font-family: 'Pacifico', cursive;
-            color: #7d1eff;
-            font-size: 2.5em;
-            margin-bottom: 15px;
-        }
-
-        .question {
-            font-size: 1.5em;
-            margin-bottom: 40px;
-            color: #4a009e;
-            font-weight: 700;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 20px;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            height: 100px; /* Para dar espacio al botón NO para moverse */
-        }
-
-        button {
-            padding: 15px 25px;
-            font-size: 1.1em;
-            border: none;
-            border-radius: 40px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: bold;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        #yesBtn {
-            background-color: #ff69b4;
-            color: white;
-            z-index: 11;
-        }
-
-        #noBtn {
-            background-color: #e0b0ff;
-            color: #4a009e;
-            position: relative;
-            z-index: 12;
-        }
-
-        /* Decoraciones animadas (Unicornios, corazones) */
-        .decoration {
-            position: absolute;
-            font-size: 3em;
-            animation: drift 10s infinite linear;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 5; /* Por debajo de la tarjeta */
-        }
-
-        @keyframes drift {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            20% { opacity: 1; }
-            80% { opacity: 1; }
-            100% { transform: translateY(-150px) rotate(360deg); opacity: 0; }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        /* Animación del conejito */
-        #rabbit {
-            position: absolute;
-            font-size: 4em; /* Tamaño del conejito */
-            bottom: 10px; /* Cerca del borde inferior */
-            left: -100px; /* Empieza fuera de la pantalla */
-            animation: rabbitJump 20s linear infinite; /* Animación de movimiento */
-            transform: scaleX(1); /* Mirando a la derecha */
-            z-index: 8; /* Por debajo de la tarjeta pero encima de otras decoraciones */
-            pointer-events: none;
-        }
-
-        @keyframes rabbitJump {
-            0% { left: -100px; transform: translateX(0) scaleX(1); } /* Empieza fuera, mirando derecha */
-            15% { left: 20%; transform: translateX(0) scaleX(1); } /* Se mueve a la derecha */
-            20% { transform: translateY(-20px); } /* Salto pequeño */
-            25% { transform: translateY(0); }
-            45% { left: 80%; transform: translateX(0) scaleX(1); } /* Llega a la derecha */
-            50% { left: 80%; transform: translateX(0) scaleX(-1); } /* Gira y mira a la izquierda */
-            65% { left: 20%; transform: translateX(0) scaleX(-1); } /* Se mueve a la izquierda */
-            70% { transform: translateY(-20px); } /* Salto pequeño */
-            75% { transform: translateY(0); }
-            95% { left: -100px; transform: translateX(0) scaleX(-1); } /* Sale por la izquierda */
-            100% { left: -100px; transform: translateX(0) scaleX(1); } /* Resetea para la siguiente vuelta */
-        }
-    </style>
-</head>
-<body>
-
-    <div class="decoration" style="top: 10%; left: 10%; animation-delay: 0s;">💜</div>
-    <div class="decoration" style="top: 20%; right: 15%; animation-delay: 2s;">🦄</div>
-    <div class="decoration" style="bottom: 15%; left: 20%; animation-delay: 4s;">💖</div>
-    <div class="decoration" style="top: 40%; right: 5%; animation-delay: 1s;">✨</div>
-    <div class="decoration" style="bottom: 5%; right: 20%; animation-delay: 3s;">🦋</div>
-
-    <div id="rabbit">🐰</div>
-
-    <div class="container" id="mainCard">
-        <h1>¡Hola!</h1>
-        <p class="question">¿Quieres ser mi San Valentín?</p>
-        <div class="buttons">
-            <button id="yesBtn" onclick="handleYes()">¡SÍ! 😍</button>
-            <button id="noBtn" onmouseover="moveButton()">No 😥</button>
-        </div>
+    <div class="main-content">
+      <h1 class="fade-in">Toca la pantalla...</h1>
     </div>
 
-    <script>
-        function moveButton() {
-            const noBtn = document.getElementById('noBtn');
-            const container = document.getElementById('mainCard');
-            
-            // Calculamos límites para que no se salga de la tarjeta blanca
-            // Ajustamos para que el botón NO no tape el SÍ por completo
-            const yesBtn = document.getElementById('yesBtn');
-            const yesBtnRect = yesBtn.getBoundingClientRect();
-            const noBtnRect = noBtn.getBoundingClientRect();
-            const containerRect = container.getBoundingClientRect();
-
-            let minX = 10;
-            let maxX = containerRect.width - noBtnRect.width - 10;
-            let minY = 10;
-            let maxY = containerRect.height - noBtnRect.height - 10;
-
-            let newX, newY;
-            let attempts = 0;
-            const padding = 20; // Espacio extra para que no se pegue al SÍ
-
-            do {
-                newX = Math.floor(Math.random() * (maxX - minX + 1)) + minX;
-                newY = Math.floor(Math.random() * (maxY - minY + 1)) + minY;
-                attempts++;
-                if (attempts > 50) break; // Evitar bucle infinito si es imposible encontrar espacio
-            } while (
-                // Colisión con el botón "SÍ"
-                newX < (yesBtnRect.left - containerRect.left + yesBtnRect.width + padding) &&
-                newX + noBtnRect.width > (yesBtnRect.left - containerRect.left - padding) &&
-                newY < (yesBtnRect.top - containerRect.top + yesBtnRect.height + padding) &&
-                newY + noBtnRect.height > (yesBtnRect.top - containerRect.top - padding)
-            );
-
-            noBtn.style.position = "absolute";
-            noBtn.style.left = newX + "px";
-            noBtn.style.top = newY + "px";
-        }
-
-        function handleYes() {
-            const card = document.getElementById('mainCard');
-            card.innerHTML = `
-                <h1 style="animation: pulse 1s infinite">¡SIII! 💖</h1>
-                <p class="question">¡Sabía que dirías que sí! Nos vemos pronto. 🥰</p>
-                <div style="font-size: 5em;">🦄💜✨</div>
-            `;
-            // Opcional: Detener la animación del conejo si ya no es relevante
-            const rabbit = document.getElementById('rabbit');
-            if (rabbit) rabbit.style.animation = 'none';
-        }
-    </script>
-</body>
+    <script src="script.js"></script>
+  </body>
 </html>
