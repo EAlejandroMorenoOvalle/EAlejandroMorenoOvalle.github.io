@@ -1,70 +1,175 @@
-const container = document.getElementById("floating-container");
-const mainMessage = document.querySelector(".main-content");
-const musica = document.getElementById("musica-fondo");
+window.onload = function () {
+  // 1. Definición de elementos y variables globales
+  const container = document.getElementById("floating-container");
+  const mainMessage = document.querySelector(".main-content");
+  const musica = document.getElementById("musica-fondo");
+  const finalNote = document.getElementById("final-note");
 
-musica.volume = 0.6;
+  let lastX = 0;
+  let interactionStarted = false;
 
-let interactionStarted = false;
+  // 2. Configuración de contenido (Imágenes y Frases)
+  const images = [
+    "foto1.jpg",
+    "foto2.jpg",
+    "foto3.jpg",
+    "foto4.jpg",
+    "foto5.jpg",
+    "foto6.jpeg",
+    "foto7.jpeg",
+  ];
 
-const phrases = [
-  "Eres mi paz",
-  "Te amo mucho",
-  "Mi sol cada día",
-  "Contigo siempre",
-  "Mi lugar favorito",
-  "Eres magia",
-  "Te elijo siempre",
-  "Mi corazón es tuyo",
-  "❤️",
-  "✨",
-  "💖",
-];
+  const phrases = [
+    "Eres mi paz",
+    "Te amo mucho",
+    "Mi sol cada día",
+    "Estás en mi mente",
+    "Contigo siempre",
+    "Mi lugar favorito",
+    "Eres magia",
+    "Mi persona favorita",
+    "Todo es mejor contigo",
+    "Te elijo siempre",
+    "Me haces feliz",
+    "Eres mi sueño",
+    "Gracias por existir",
+    "Mi corazón es tuyo",
+    "Juntos por siempre",
+    "Eres luz",
+    "Increíble contigo",
+    "Amo tu sonrisa",
+    "Mi mundo entero",
+    "Eres mi hogar",
+    "Love you",
+    "Para siempre",
+    "Mi paz",
+    "Futura esposa",
+    "Quiero una vida contigo",
+    "¡Me encantas!",
+    "Aunque te caiga mal... 😏",
+    "❤️",
+    "💖",
+    "✨",
+    "💙",
+    "💍",
+    "🌸",
+    "⭐",
+  ];
 
-const colors = ["#ff00ff", "#00d4ff", "#ff007f", "#00ffcc", "#ffffff"];
+  const colors = ["#ff00ff", "#00d4ff", "#ff007f", "#00ffcc", "#ffffff"];
 
-function createFloatingElement() {
-  const element = document.createElement("div");
+  // 3. Función para crear elementos que flotan (Fotos y Textos)
+  function createFloatingElement() {
+    // Si ya apareció la nota final, dejamos de crear elementos
+    if (finalNote && !finalNote.classList.contains("hidden")) return;
 
-  const content = phrases[Math.floor(Math.random() * phrases.length)];
-  const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    const isImage = Math.random() > 0.7 && images.length > 0;
+    const element = document.createElement(isImage ? "img" : "div");
 
-  element.className = "floating-item";
-  element.innerText = content;
-  element.style.color = randomColor;
-  element.style.left = Math.random() * 90 + "%";
-  element.style.fontSize = Math.random() * 1 + 1 + "rem";
-  element.style.animationDuration = Math.random() * 6 + 6 + "s";
+    const randomLeft = Math.random() * 80;
+    const randomDuration = Math.random() * 7 + 6;
 
-  container.appendChild(element);
+    if (isImage) {
+      const randomImg = images[Math.floor(Math.random() * images.length)];
+      element.src = randomImg;
+      element.className = "floating-img";
+      const rotation = Math.random() * 30 - 15;
+      element.style.transform = `rotate(${rotation}deg)`;
+    } else {
+      const content = phrases[Math.floor(Math.random() * phrases.length)];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      element.className = "floating-item";
+      element.innerText = content;
+      element.style.color = randomColor;
+      element.style.textShadow = `0 0 10px ${randomColor}, 0 0 20px ${randomColor}`;
 
-  setTimeout(() => {
-    element.remove();
-  }, 12000);
-}
-
-/* 🔥 ESTA ES LA PARTE IMPORTANTE PARA QUE FUNCIONE EN CELULAR */
-
-document.addEventListener(
-  "pointerdown",
-  () => {
-    if (!interactionStarted) {
-      mainMessage.classList.add("fade-out");
-
-      musica.currentTime = 0;
-
-      musica
-        .play()
-        .then(() => {
-          console.log("Audio iniciado correctamente");
-        })
-        .catch((err) => {
-          console.log("Error al reproducir:", err);
-        });
-
-      interactionStarted = true;
+      // --- AQUÍ HACEMOS EL CAMBIO DE TAMAÑO ---
+      // Si la frase es una de las especiales, le damos un tamaño mayor (ej. 2.5rem)
+      if (
+        content === "Futura Esposa" ||
+        content === "Quiero una vida contigo"
+      ) {
+        element.style.fontSize = "2.5rem"; // Mucho más grande
+        element.style.fontWeight = "bold"; // Negrita para que resalte
+        element.style.zIndex = "100"; // Que pase por encima de otras
+      } else {
+        // Tamaño normal para el resto de las frases
+        const fontSize = Math.random() * 0.5 + 1;
+        element.style.fontSize = `${fontSize}rem`;
+      }
     }
-  },
-  { once: true },
-);
 
-setInterval(createFloatingElement, 600);
+    element.style.left = `${randomLeft}%`;
+    element.style.position = "absolute";
+    element.style.animation = `moveUp ${randomDuration}s linear forwards`;
+
+    container.appendChild(element);
+    setTimeout(() => {
+      element.remove();
+    }, randomDuration * 1000);
+  }
+
+  function showFinalNote() {
+    // 1. Ocultar absolutamente todo
+    container.style.display = "none";
+    if (mainMessage) mainMessage.style.display = "none";
+
+    // Opcional: Ocultar las estrellas si tienen el id "stars"
+    const stars = document.getElementById("stars");
+    if (stars) stars.style.display = "none";
+
+    // 2. Mostrar la nota
+    finalNote.classList.remove("hidden");
+
+    // Forzamos un pequeño retraso para que la transición de opacidad funcione
+    setTimeout(() => {
+      finalNote.classList.add("show");
+    }, 100);
+  }
+
+  // 5. Lógica de movimiento e interacción inicial
+  const startEverything = () => {
+    if (!interactionStarted) {
+      if (mainMessage) mainMessage.classList.add("fade-out");
+      if (musica) {
+        musica
+          .play()
+          .catch((error) => console.log("Esperando clic para audio..."));
+      }
+      interactionStarted = true;
+      //60 segundos
+      setTimeout(showFinalNote, 60000);
+    }
+  };
+
+  const handleMove = (e) => {
+    startEverything();
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const moveX = (x - window.innerWidth / 2) / 12;
+    const moveY = (y - window.innerHeight / 2) / 12;
+
+    const tilt = (x - lastX) * 2.5;
+    const limitedTilt = Math.max(Math.min(tilt, 15), -15);
+
+    container.style.transition = "transform 0.1s ease-out";
+    container.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${limitedTilt}deg)`;
+
+    lastX = x;
+  };
+
+  const resetMove = () => {
+    container.style.transition = "transform 0.8s ease-out";
+    container.style.transform = "translate(0, 0) rotate(0deg)";
+  };
+
+  // 6. Inicialización de eventos
+  setInterval(createFloatingElement, 600);
+
+  document.addEventListener("mousemove", handleMove);
+  document.addEventListener("touchmove", handleMove);
+  document.addEventListener("touchend", resetMove);
+  document.addEventListener("mouseleave", resetMove);
+  document.addEventListener("click", startEverything);
+};
