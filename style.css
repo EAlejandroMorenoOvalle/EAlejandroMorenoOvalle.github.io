@@ -95,3 +95,71 @@ body {
   opacity: 0;
   transition: opacity 1s ease-out;
 }
+
+#final-note {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0b0d17; /* Puedes cambiarlo a #000 para negro total */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999; /* Un número muy alto para estar sobre TODO */
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+  visibility: hidden;
+}
+
+#final-note.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Para ocultar las estrellas y cualquier otra cosa */
+.hidden-total {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+/* Estilo de la nota (Post-it) */
+.paper {
+  background: #fffdc1; /* Color amarillito de nota */
+  padding: 40px;
+  width: 80%;
+  max-width: 300px;
+  min-height: 200px;
+  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.5);
+  transform: rotate(-3deg); /* Inclinación de nota real */
+  position: relative;
+  text-align: center;
+  font-family: "Pacifico", cursive; /* O una fuente cursiva */
+}
+
+.paper p {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.paper h2 {
+  color: #d63031;
+  font-size: 2.2rem;
+  margin-top: 0;
+}
+
+/* Esquina doblada de la nota */
+.paper::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-width: 20px 20px 0 0;
+  border-style: solid;
+  border-color: #e6e4a3 #0b0d17; /* Color de fondo para simular corte */
+}
+
+.hidden {
+  display: none !important;
+}
