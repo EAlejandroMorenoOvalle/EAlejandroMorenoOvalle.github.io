@@ -66,7 +66,7 @@ window.onload = function () {
     const isImage = Math.random() > 0.7 && images.length > 0;
     const element = document.createElement(isImage ? "img" : "div");
 
-    const randomLeft = Math.random() * 50;
+    const randomLeft = Math.random() * 30;
     const randomDuration = Math.random() * 7 + 6;
 
     if (isImage) {
@@ -155,6 +155,7 @@ window.onload = function () {
   document.addEventListener("mouseleave", resetMove);
   document.addEventListener("click", startEverything);
 };
+
 
 
 
