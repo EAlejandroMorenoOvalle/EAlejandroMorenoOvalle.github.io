@@ -1,5 +1,4 @@
 window.onload = function () {
-  // 1. Definición de elementos y variables globales
   const container = document.getElementById("floating-container");
   const mainMessage = document.querySelector(".main-content");
   const musica = document.getElementById("musica-fondo");
@@ -7,8 +6,8 @@ window.onload = function () {
 
   let lastX = 0;
   let interactionStarted = false;
+  let generatorInterval; // Variable para controlar el inicio del flujo
 
-  // 2. Configuración de contenido (Imágenes y Frases)
   const images = [
     "foto1.jpg",
     "foto2.jpg",
@@ -18,7 +17,6 @@ window.onload = function () {
     "foto6.jpeg",
     "foto7.jpeg",
   ];
-
   const phrases = [
     "Eres mi paz",
     "Te amo mucho",
@@ -36,13 +34,11 @@ window.onload = function () {
     "Mi corazón es tuyo",
     "Juntos por siempre",
     "Eres luz",
-    "Increíble contigo",
     "Amo tu sonrisa",
     "Mi mundo entero",
     "Eres mi hogar",
     "Love you",
     "Para siempre",
-    "Mi paz",
     "Futura esposa",
     "Quiero una vida contigo",
     "¡Me encantas!",
@@ -58,26 +54,20 @@ window.onload = function () {
     "🐰",
     "🐾",
   ];
-
   const colors = ["#ff00ff", "#00d4ff", "#ff007f", "#00ffcc", "#ffffff"];
 
-  // 3. Función para crear elementos que flotan (Fotos y Textos)
   function createFloatingElement() {
-    // Si ya apareció la nota final, dejamos de crear elementos
     if (finalNote && !finalNote.classList.contains("hidden")) return;
 
     const isImage = Math.random() > 0.7 && images.length > 0;
     const element = document.createElement(isImage ? "img" : "div");
-
     const randomLeft = Math.random() * 80;
     const randomDuration = Math.random() * 7 + 6;
 
     if (isImage) {
-      const randomImg = images[Math.floor(Math.random() * images.length)];
-      element.src = randomImg;
+      element.src = images[Math.floor(Math.random() * images.length)];
       element.className = "floating-img";
-      const rotation = Math.random() * 30 - 15;
-      element.style.transform = `rotate(${rotation}deg)`;
+      element.style.transform = `rotate(${Math.random() * 30 - 15}deg)`;
     } else {
       const content = phrases[Math.floor(Math.random() * phrases.length)];
       const randomColor = colors[Math.floor(Math.random() * colors.length)];
@@ -86,17 +76,14 @@ window.onload = function () {
       element.style.color = randomColor;
       element.style.textShadow = `0 0 10px ${randomColor}, 0 0 20px ${randomColor}`;
 
-      // --- AQUÍ HACEMOS EL CAMBIO DE TAMAÑO ---
-      // Si la frase es una de las especiales, le damos un tamaño mayor (ej. 2.5rem)
       if (
-        content === "Futura Esposa" ||
+        content === "Futura esposa" ||
         content === "Quiero una vida contigo"
       ) {
-        element.style.fontSize = "2.5rem"; // Mucho más grande
-        element.style.fontWeight = "bold"; // Negrita para que resalte
-        element.style.zIndex = "100"; // Que pase por encima de otras
+        element.style.fontSize = "2.5rem";
+        element.style.fontWeight = "bold";
+        element.style.zIndex = "100";
       } else {
-        // Tamaño normal para el resto de las frases
         const fontSize = Math.random() * 0.5 + 1;
         element.style.fontSize = `${fontSize}rem`;
       }
@@ -104,49 +91,50 @@ window.onload = function () {
 
     element.style.left = `${randomLeft}%`;
     element.style.position = "absolute";
+    element.style.bottom = "-150px"; // Aseguramos que nazcan abajo
     element.style.animation = `moveUp ${randomDuration}s linear forwards`;
 
     container.appendChild(element);
-    setTimeout(() => {
-      element.remove();
-    }, randomDuration * 1000);
+    setTimeout(() => element.remove(), randomDuration * 1000);
   }
 
   function showFinalNote() {
-    // 1. Ocultar absolutamente todo
+    clearInterval(generatorInterval); // Detenemos la lluvia
     container.style.display = "none";
     if (mainMessage) mainMessage.style.display = "none";
-
-    // Opcional: Ocultar las estrellas si tienen el id "stars"
     const stars = document.getElementById("stars");
     if (stars) stars.style.display = "none";
 
-    // 2. Mostrar la nota
     finalNote.classList.remove("hidden");
-
-    // Forzamos un pequeño retraso para que la transición de opacidad funcione
-    setTimeout(() => {
-      finalNote.classList.add("show");
-    }, 100);
+    setTimeout(() => finalNote.classList.add("show"), 100);
   }
 
-  // 5. Lógica de movimiento e interacción inicial
+  // ESTA ES LA FUNCIÓN CLAVE PARA EL AUDIO "AUTOMÁTICO"
   const startEverything = () => {
     if (!interactionStarted) {
-      if (mainMessage) mainMessage.classList.add("fade-out");
-      //if (musica) {
-      musica
-        .play()
-        .catch((error) => console.log("Esperando clic para audio..."));
-      //}
       interactionStarted = true;
-      //60 segundos
+
+      if (mainMessage) mainMessage.classList.add("fade-out");
+
+      // Intentar tocar la música de inmediato al primer contacto
+      if (musica) {
+        musica
+          .play()
+          .catch((error) => console.log("Audio esperando interacción real"));
+      }
+
+      // Iniciar la lluvia de fotos y frases SOLO cuando ella toque/mueva
+      generatorInterval = setInterval(createFloatingElement, 600);
+
+      // Programar la nota final
       setTimeout(showFinalNote, 60000);
     }
   };
 
   const handleMove = (e) => {
-    startEverything();
+    // Si no ha empezado, el movimiento del mouse/dedo lo activa
+    if (!interactionStarted) startEverything();
+
     const x = e.touches ? e.touches[0].clientX : e.clientX;
     const y = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -158,7 +146,6 @@ window.onload = function () {
 
     container.style.transition = "transform 0.1s ease-out";
     container.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${limitedTilt}deg)`;
-
     lastX = x;
   };
 
@@ -167,13 +154,12 @@ window.onload = function () {
     container.style.transform = "translate(0, 0) rotate(0deg)";
   };
 
-  // 6. Inicialización de eventos
-  setInterval(createFloatingElement, 600);
-
+  // --- EVENTOS ---
+  // Quitamos el setInterval de aquí para que no floten antes de la música
   document.addEventListener("mousemove", handleMove);
   document.addEventListener("touchmove", handleMove);
+  document.addEventListener("touchstart", startEverything); // Para móviles
+  document.addEventListener("click", startEverything); // Para PC
   document.addEventListener("touchend", resetMove);
   document.addEventListener("mouseleave", resetMove);
-  document.addEventListener("click", startEverything);
-  startEverything();
 };
