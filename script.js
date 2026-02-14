@@ -1,7 +1,8 @@
 // 1. Definición de elementos y variables globales
 const container = document.getElementById("floating-container");
 const mainMessage = document.querySelector(".main-content");
-
+const musica = document.getElementById("musica-fondo");
+musica.volume = 0.5; // Ajusta el volumen al 50% para probar
 let lastX = 0;
 let interactionStarted = false;
 
@@ -86,14 +87,22 @@ function createFloatingElement() {
   }, randomDuration * 1000);
 }
 
-// 4. Lógica de movimiento e interacción
+// 4. Lógica de movimiento, música e inclinación
 const handleMove = (e) => {
-  // Desaparecer el texto central en la primera interacción
-  if (!interactionStarted && mainMessage) {
-    mainMessage.classList.add("fade-out");
+  // --- ACTIVAR MÚSICA Y QUITAR TEXTO ---
+  if (!interactionStarted) {
+    if (mainMessage) mainMessage.classList.add("fade-out");
+
+    // Reproducir música (funciona al primer movimiento/toque)
+    if (musica) {
+      musica.play().catch((error) => {
+        console.log("Esperando interacción para audio...");
+      });
+    }
     interactionStarted = true;
   }
 
+  // Obtener coordenadas
   const x = e.touches ? e.touches[0].clientX : e.clientX;
   const y = e.touches ? e.touches[0].clientY : e.clientY;
 
@@ -116,7 +125,7 @@ const resetMove = () => {
   container.style.transform = "translate(0, 0) rotate(0deg)";
 };
 
-// 5. Inicialización
+// 5. Inicialización de eventos
 setInterval(createFloatingElement, 600);
 
 document.addEventListener("mousemove", handleMove);
@@ -124,10 +133,23 @@ document.addEventListener("touchmove", handleMove);
 document.addEventListener("touchend", resetMove);
 document.addEventListener("mouseleave", resetMove);
 
-// Quitar mensaje automáticamente a los 5 segundos si no tocan nada
+// Quitar mensaje automáticamente si no hay interacción
 setTimeout(() => {
   if (!interactionStarted && mainMessage) {
     mainMessage.classList.add("fade-out");
     interactionStarted = true;
   }
 }, 5000);
+
+// Agrega esto al final de tu script.js junto a los otros eventListeners
+document.addEventListener(
+  "click",
+  () => {
+    if (!interactionStarted) {
+      if (mainMessage) mainMessage.classList.add("fade-out");
+      musica.play();
+      interactionStarted = true;
+    }
+  },
+  { once: true },
+); // El { once: true } hace que solo se ejecute la primera vez que toques
