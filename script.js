@@ -4,7 +4,6 @@ window.onload = function () {
   const musica = document.getElementById("musica-fondo");
   const finalNote = document.getElementById("final-note");
 
-  let lastX = 0;
   let interactionStarted = false;
   let generatorInterval;
 
@@ -64,57 +63,22 @@ window.onload = function () {
     }, randomDuration * 1000);
   }
 
-  // --- LÓGICA DE MOVIMIENTO ---
-  const handleMove = (e) => {
-    if (!interactionStarted) return; // No se mueve hasta que empiece la música
-
-    const x = e.touches ? e.touches[0].clientX : e.clientX;
-    const y = e.touches ? e.touches[0].clientY : e.clientY;
-
-    const moveX = (x - window.innerWidth / 2) / 12;
-    const moveY = (y - window.innerHeight / 2) / 12;
-
-    const tilt = (x - lastX) * 2.5;
-    const limitedTilt = Math.max(Math.min(tilt, 15), -15);
-
-    container.style.transition = "transform 0.1s ease-out";
-    container.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${limitedTilt}deg)`;
-
-    lastX = x;
-  };
-
-  const resetMove = () => {
-    container.style.transition = "transform 0.8s ease-out";
-    container.style.transform = "translate(0, 0) rotate(0deg)";
-  };
-
   const startEverything = () => {
     if (interactionStarted) return;
     interactionStarted = true;
 
-    // EL TRUCO PARA MÓVILES:
-    // Cargamos el audio explícitamente antes de darle play
+    // 1. Iniciar Música
     if (musica) {
-      musica.load(); // Esto "despierta" al archivo en el celular
-
-      // Usamos un pequeño delay de 50ms para que el procesador del cel se prepare
-      setTimeout(() => {
-        musica
-          .play()
-          .then(() => {
-            console.log("Audio sonando en móvil");
-          })
-          .catch((err) => {
-            console.log("Error en móvil:", err);
-            // Si falla, intentamos una vez más (a veces el primer intento falla en iOS)
-            musica.play();
-          });
-      }, 50);
+      musica.play().catch((err) => console.log("Error al reproducir:", err));
     }
 
+    // 2. Ocultar mensaje y empezar lluvia de elementos
     if (mainMessage) mainMessage.classList.add("fade-out");
 
+    // Iniciamos la generación aquí para que no salgan antes del audio
     generatorInterval = setInterval(createFloatingElement, 600);
+
+    // 3. Cronómetro para la nota final
     setTimeout(showFinalNote, 60000);
   };
 
@@ -125,10 +89,6 @@ window.onload = function () {
     setTimeout(() => finalNote.classList.add("show"), 100);
   }
 
-  // --- EVENTOS ---
+  // Escuchador de interacción (Clic o Toque)
   document.addEventListener("pointerdown", startEverything);
-  document.addEventListener("mousemove", handleMove);
-  document.addEventListener("touchmove", handleMove);
-  document.addEventListener("touchend", resetMove);
-  document.addEventListener("mouseleave", resetMove);
 };
