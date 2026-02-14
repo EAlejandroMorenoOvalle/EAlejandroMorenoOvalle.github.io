@@ -92,8 +92,24 @@ window.onload = function () {
     if (interactionStarted) return;
     interactionStarted = true;
 
+    // EL TRUCO PARA MÓVILES:
+    // Cargamos el audio explícitamente antes de darle play
     if (musica) {
-      musica.play().catch((err) => console.log("Error al reproducir:", err));
+      musica.load(); // Esto "despierta" al archivo en el celular
+
+      // Usamos un pequeño delay de 50ms para que el procesador del cel se prepare
+      setTimeout(() => {
+        musica
+          .play()
+          .then(() => {
+            console.log("Audio sonando en móvil");
+          })
+          .catch((err) => {
+            console.log("Error en móvil:", err);
+            // Si falla, intentamos una vez más (a veces el primer intento falla en iOS)
+            musica.play();
+          });
+      }, 50);
     }
 
     if (mainMessage) mainMessage.classList.add("fade-out");
