@@ -1,13 +1,12 @@
 window.onload = function () {
   const container = document.getElementById("floating-container");
-  const mainMessage = document.getElementById("start-btn"); // Cambiado a ID
+  const mainMessage = document.getElementById("start-btn");
   const musica = document.getElementById("musica-fondo");
   const finalNote = document.getElementById("final-note");
 
   let interactionStarted = false;
   let generatorInterval;
 
-  // ... (Tus listas de imágenes y frases se quedan igual) ...
   const images = [
     "foto1.jpg",
     "foto2.jpg",
@@ -17,6 +16,7 @@ window.onload = function () {
     "foto6.jpeg",
     "foto7.jpeg",
   ];
+
   const phrases = [
     "Eres mi paz",
     "Te amo mucho",
@@ -25,6 +25,7 @@ window.onload = function () {
     "❤️",
     "🐰",
   ];
+
   const colors = ["#ff00ff", "#00d4ff", "#ff007f", "#00ffcc", "#ffffff"];
 
   function createFloatingElement() {
@@ -62,32 +63,24 @@ window.onload = function () {
     }, randomDuration * 1000);
   }
 
-  // ESTA ES LA FUNCIÓN QUE "ROMPE" EL BLOQUEO
-  const startEverything = (e) => {
+  const startEverything = () => {
     if (interactionStarted) return;
+    interactionStarted = true;
 
-    // 1. Intentar reproducir el audio inmediatamente
+    // 1. Iniciar Música
     if (musica) {
-      musica
-        .play()
-        .then(() => {
-          console.log("¡Audio desbloqueado!");
-          interactionStarted = true;
-          iniciarEfectos();
-        })
-        .catch((err) => {
-          console.log(
-            "El navegador aún bloquea el audio. Reintenta con un toque claro.",
-          );
-        });
+      musica.play().catch((err) => console.log("Error al reproducir:", err));
     }
-  };
 
-  function iniciarEfectos() {
+    // 2. Ocultar mensaje y empezar lluvia de elementos
     if (mainMessage) mainMessage.classList.add("fade-out");
+
+    // Iniciamos la generación aquí para que no salgan antes del audio
     generatorInterval = setInterval(createFloatingElement, 600);
+
+    // 3. Cronómetro para la nota final
     setTimeout(showFinalNote, 60000);
-  }
+  };
 
   function showFinalNote() {
     clearInterval(generatorInterval);
@@ -96,7 +89,6 @@ window.onload = function () {
     setTimeout(() => finalNote.classList.add("show"), 100);
   }
 
-  // ESCUCHADORES DE EVENTOS CLAVE
-  // Usamos 'pointerdown' que funciona en PC y Móvil de forma más agresiva
+  // Escuchador de interacción (Clic o Toque)
   document.addEventListener("pointerdown", startEverything);
 };
