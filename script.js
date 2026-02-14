@@ -15,6 +15,8 @@ window.onload = function () {
     "foto3.jpg",
     "foto4.jpg",
     "foto5.jpg",
+    "foto6.jpeg",
+    "foto7.jpeg",
   ];
 
   const phrases = [
@@ -38,10 +40,13 @@ window.onload = function () {
     "Amo tu sonrisa",
     "Mi mundo entero",
     "Eres mi hogar",
-    "Tan tú, tan yo",
     "Love you",
     "Para siempre",
     "Mi paz en el caos",
+    "Futura esposa",
+    "Quiero una vida contigo",
+    "¡Me encantas!",
+    "Aunque te caiga mal... 😏",
     "❤️",
     "💖",
     "✨",
@@ -150,3 +155,4 @@ window.onload = function () {
   document.addEventListener("mouseleave", resetMove);
   document.addEventListener("click", startEverything);
 };
+
