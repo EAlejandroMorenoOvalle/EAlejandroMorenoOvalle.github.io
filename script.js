@@ -1,12 +1,14 @@
 window.onload = function () {
+  // 1. Definición de elementos y variables globales
   const container = document.getElementById("floating-container");
-  const mainMessage = document.getElementById("start-btn");
+  const mainMessage = document.querySelector(".main-content");
   const musica = document.getElementById("musica-fondo");
   const finalNote = document.getElementById("final-note");
 
+  let lastX = 0;
   let interactionStarted = false;
-  let generatorInterval;
 
+  // 2. Configuración de contenido (Imágenes y Frases)
   const images = [
     "foto1.jpg",
     "foto2.jpg",
@@ -20,19 +22,51 @@ window.onload = function () {
   const phrases = [
     "Eres mi paz",
     "Te amo mucho",
+    "Mi sol cada día",
+    "Estás en mi mente",
+    "Contigo siempre",
+    "Mi lugar favorito",
+    "Eres magia",
+    "Mi persona favorita",
+    "Todo es mejor contigo",
+    "Te elijo siempre",
+    "Me haces feliz",
+    "Eres mi sueño",
+    "Gracias por existir",
+    "Mi corazón es tuyo",
+    "Juntos por siempre",
+    "Eres luz",
+    "Increíble contigo",
+    "Amo tu sonrisa",
+    "Mi mundo entero",
+    "Eres mi hogar",
+    "Love you",
+    "Para siempre",
+    "Mi paz",
     "Futura esposa",
     "Quiero una vida contigo",
+    "¡Me encantas!",
+    "Aunque te caiga mal... 😏",
     "❤️",
-    "🐰",
+    "💖",
+    "✨",
+    "💙",
+    "💍",
+    "🌸",
+    "⭐",
   ];
 
   const colors = ["#ff00ff", "#00d4ff", "#ff007f", "#00ffcc", "#ffffff"];
 
+  // 3. Función para crear elementos que flotan (Fotos y Textos)
   function createFloatingElement() {
+    // Si ya apareció la nota final, dejamos de crear elementos
+    if (finalNote && !finalNote.classList.contains("hidden")) return;
+
     const isImage = Math.random() > 0.7 && images.length > 0;
     const element = document.createElement(isImage ? "img" : "div");
 
-    const randomLeft = Math.random() * 85;
+    const randomLeft = Math.random() * 80;
     const randomDuration = Math.random() * 7 + 6;
 
     if (isImage) {
@@ -49,8 +83,20 @@ window.onload = function () {
       element.style.color = randomColor;
       element.style.textShadow = `0 0 10px ${randomColor}, 0 0 20px ${randomColor}`;
 
-      const fontSize = Math.random() * 1 + 0.8;
-      element.style.fontSize = `${fontSize}rem`;
+      // --- AQUÍ HACEMOS EL CAMBIO DE TAMAÑO ---
+      // Si la frase es una de las especiales, le damos un tamaño mayor (ej. 2.5rem)
+      if (
+        content === "Futura Esposa" ||
+        content === "Quiero una vida contigo"
+      ) {
+        element.style.fontSize = "2.5rem"; // Mucho más grande
+        element.style.fontWeight = "bold"; // Negrita para que resalte
+        element.style.zIndex = "100"; // Que pase por encima de otras
+      } else {
+        // Tamaño normal para el resto de las frases
+        const fontSize = Math.random() * 0.5 + 1;
+        element.style.fontSize = `${fontSize}rem`;
+      }
     }
 
     element.style.left = `${randomLeft}%`;
@@ -63,32 +109,67 @@ window.onload = function () {
     }, randomDuration * 1000);
   }
 
-  const startEverything = () => {
-    if (interactionStarted) return;
-    interactionStarted = true;
-
-    // 1. Iniciar Música
-    if (musica) {
-      musica.play().catch((err) => console.log("Error al reproducir:", err));
-    }
-
-    // 2. Ocultar mensaje y empezar lluvia de elementos
-    if (mainMessage) mainMessage.classList.add("fade-out");
-
-    // Iniciamos la generación aquí para que no salgan antes del audio
-    generatorInterval = setInterval(createFloatingElement, 600);
-
-    // 3. Cronómetro para la nota final
-    setTimeout(showFinalNote, 60000);
-  };
-
   function showFinalNote() {
-    clearInterval(generatorInterval);
+    // 1. Ocultar absolutamente todo
     container.style.display = "none";
+    if (mainMessage) mainMessage.style.display = "none";
+
+    // Opcional: Ocultar las estrellas si tienen el id "stars"
+    const stars = document.getElementById("stars");
+    if (stars) stars.style.display = "none";
+
+    // 2. Mostrar la nota
     finalNote.classList.remove("hidden");
-    setTimeout(() => finalNote.classList.add("show"), 100);
+
+    // Forzamos un pequeño retraso para que la transición de opacidad funcione
+    setTimeout(() => {
+      finalNote.classList.add("show");
+    }, 100);
   }
 
-  // Escuchador de interacción (Clic o Toque)
-  document.addEventListener("pointerdown", startEverything);
+  // 5. Lógica de movimiento e interacción inicial
+  const startEverything = () => {
+    if (!interactionStarted) {
+      if (mainMessage) mainMessage.classList.add("fade-out");
+      if (musica) {
+        musica
+          .play()
+          .catch((error) => console.log("Esperando clic para audio..."));
+      }
+      interactionStarted = true;
+      //60 segundos
+      setTimeout(showFinalNote, 60000);
+    }
+  };
+
+  const handleMove = (e) => {
+    startEverything();
+    const x = e.touches ? e.touches[0].clientX : e.clientX;
+    const y = e.touches ? e.touches[0].clientY : e.clientY;
+
+    const moveX = (x - window.innerWidth / 2) / 12;
+    const moveY = (y - window.innerHeight / 2) / 12;
+
+    const tilt = (x - lastX) * 2.5;
+    const limitedTilt = Math.max(Math.min(tilt, 15), -15);
+
+    container.style.transition = "transform 0.1s ease-out";
+    container.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${limitedTilt}deg)`;
+
+    lastX = x;
+  };
+
+  const resetMove = () => {
+    container.style.transition = "transform 0.8s ease-out";
+    container.style.transform = "translate(0, 0) rotate(0deg)";
+  };
+
+  // 6. Inicialización de eventos
+  setInterval(createFloatingElement, 600);
+
+  document.addEventListener("mousemove", handleMove);
+  document.addEventListener("touchmove", handleMove);
+  document.addEventListener("touchend", resetMove);
+  document.addEventListener("mouseleave", resetMove);
+  document.addEventListener("click", startEverything);
 };
